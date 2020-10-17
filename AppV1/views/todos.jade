@@ -1,0 +1,8 @@
+extends layout
+
+block content
+  h1= title
+  ul
+    each val in todos
+        - var link = "localhost:3000/delete/" + val.id
+        li #{val.Name} #{isComplete ? 'True' : 'False'} <a href = #{link}>Delete</a>

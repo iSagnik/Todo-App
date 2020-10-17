@@ -42,15 +42,18 @@ knex.schema
             console.error(`There was an error setting up the database: ${error}`)
         })
 
-knex.schema.hasColumn('Todos', 'Name').then( (exists) => {
-    if (!exists)
-        console.log("Nope")
-    else
-        console.log("Yup")
-})
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+    /* return todas in todo page */
+    knex.select('*').from('Todos').then((data) => {
+        console.log(data)
+        res.render('todos', { title: 'My Todos:', todos: data })
+
+    }).catch((error) => {
+        console.log(`Error: ${error}`)
+    })
+
+    //res.render('index', { title: 'Express' });
 });
 
 router.get('/createtodo', function(req, res, next) {
@@ -61,5 +64,20 @@ router.get('/createtodo', function(req, res, next) {
         res.render('index', { title: `Error ${error}` });
     })
   });
+
+router.get('/delete/:id', function(req, res, next) {
+    console.log(req.params.id)
+    
+    knex('Todos')
+    .where('id', req.params.id)
+    .del()
+    .then( () => {
+        res.render('index', {title: 'Deleted'})
+    })
+    .catch( (error) => {
+        res.render('index', {title: `${error}`})
+    })
+});
+
 
 module.exports = router;
